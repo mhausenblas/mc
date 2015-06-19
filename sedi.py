@@ -37,7 +37,8 @@ class SeDiProxy(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*') # enable CORS - http://enable-cors.org/#how
         self.end_headers()
-        self.wfile.write(lookup_service('localhost', logical_service_name))
+        (ip, port) = lookup_service('localhost', logical_service_name)
+        self.wfile.write( { 'ip': ip, 'port' : port })
 
 ################################################################################
 # Main script
