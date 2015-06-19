@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 """
 A simple service discovery proxy for Mesos-DNS, exposing a CORS-enabled HTTP API.
+It is assumed to run on the same host as Mesos-DNS.
 
 Usage: 
 
-    ./sedi.py $MESOS_DNS_HOST
+    ./sedi.py
 
 Make sure that Mesos-DNS is installed and running, see:
 http://mesosphere.github.io/mesos-dns/docs/
 
-Example: 
-
-    ./sedi.py localhost
 
 @author: Michael Hausenblas, http://mhausenblas.info/#i
 @since: 2015-06-19
@@ -22,6 +20,7 @@ import sys
 import json
 import urlparse
 import urllib
+from mc import lookup_service
 from BaseHTTPServer import BaseHTTPRequestHandler
 
 class SeDiProxy(BaseHTTPRequestHandler):
@@ -35,7 +34,7 @@ class SeDiProxy(BaseHTTPRequestHandler):
     def resolve(self, logical_service_name):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*') # enable CORS - http://enable-cors.org/#how
+        self.send_header('Access-Control-Allow-Origin', '*') # enable CORS
         self.end_headers()
         (ip, port) = lookup_service('localhost', logical_service_name)
         self.wfile.write( { 'ip': ip, 'port' : port })
@@ -44,11 +43,6 @@ class SeDiProxy(BaseHTTPRequestHandler):
 # Main script
 #
 if __name__ == '__main__':
-    try:
-        from BaseHTTPServer import HTTPServer
-        server = HTTPServer(('localhost', 31313), SeDiProxy)
-        server.serve_forever()
-    except err:
-        print(err)
-        print(__doc__)
-        sys.exit(2)
+    from BaseHTTPServer import HTTPServer
+    server = HTTPServer(('localhost', 31313), SeDiProxy)
+    server.serve_forever()
