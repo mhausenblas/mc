@@ -33,11 +33,10 @@ class SeDiProxy(BaseHTTPRequestHandler):
     
     def resolve(self, logical_service_name):
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*') # enable CORS
         self.end_headers()
         (ip, port) = lookup_service('localhost', logical_service_name)
-        self.wfile.write( { 'ip': ip, 'port' : port })
+        self.wfile.write( 'http://' + ip + ':' + port )
 
 ################################################################################
 # Main script
