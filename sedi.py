@@ -43,5 +43,5 @@ class SeDiProxy(BaseHTTPRequestHandler):
 #
 if __name__ == '__main__':
     from BaseHTTPServer import HTTPServer
-    server = HTTPServer(('localhost', 31313), SeDiProxy)
+    server = HTTPServer(('', 31313), SeDiProxy)
     server.serve_forever()
